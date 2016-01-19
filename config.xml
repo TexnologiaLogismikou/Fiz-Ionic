@@ -27,4 +27,5 @@
         <param name="ios-package" value="CDVInAppBrowser" />
         <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
     </feature>
+    <allow-navigation href="fiz.eu.auth0.com"/>
 </widget>
