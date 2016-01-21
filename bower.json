@@ -4,7 +4,11 @@
   "dependencies": {
     "auth0-angular": "4.*",
     "a0-angular-storage": ">= 0.0.12",
-    "angular-jwt": ">= 0.0.9"
+    "angular-jwt": ">= 0.0.9",
+    "sockjs": ">= 0.3.4",
+    "stomp-websocket": ">= 2.3.4",
+    "angular": ">= 1.0.8",
+    "lodash": "2.4.1"
   },
   "devDependencies": {
     "ionic": "driftyco/ionic-bower#v1.1.1"

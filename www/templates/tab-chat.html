@@ -1,0 +1,25 @@
+<ion-view view-title="Chat">
+    <ion-content has-bouncing="true" class="content">
+        <button ng-click="initialize()">init</button>
+        <div>
+            <ul>
+                <li ng-repeat="message in messages | orderBy:'time':true">
+                    <span ng-style="font-weight:bold;">{{message.username}} : </span>{{message.message}}
+                </li>
+            </ul>
+        </div>
+        <div class="list light-grey bottommsg">
+            <div class="item item-input-inset light-grey">
+                <label class="item-input-wrapper line-light-grey nopadtop">
+                    <input class="line-light-grey" type="text" placeholder="Message"
+                           ng-enter="send()" ng-model="message.value">
+                </label>
+
+                <div class="divsend">
+                    <button class="button button-clear ion-android-send iconsend"
+                            ng-click="send()"></button>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

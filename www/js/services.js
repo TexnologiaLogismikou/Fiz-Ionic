@@ -1,50 +1,112 @@
 angular.module('starter.services', [])
 
-.factory('Chats', function() {
-  // Might use a resource here that returns a JSON array
+    .factory('UserInfo', function () {
 
-  // Some fake testing data
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'https://pbs.twimg.com/profile_images/514549811765211136/9SgAuHeY.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'https://avatars3.githubusercontent.com/u/11214?v=3&s=460'
-  }, {
-    id: 2,
-    name: 'Andrew Jostlin',
-    lastText: 'Did you get the ice cream?',
-    face: 'https://pbs.twimg.com/profile_images/491274378181488640/Tti0fFVJ.jpeg'
-  }, {
-    id: 3,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'https://pbs.twimg.com/profile_images/479090794058379264/84TKj_qa.jpeg'
-  }, {
-    id: 4,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'https://pbs.twimg.com/profile_images/491995398135767040/ie2Z_V6e.jpeg'
-  }];
-
-  return {
-    all: function() {
-      return chats;
-    },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
-    },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
+        /**
+         * Constructor, with class name
+         */
+        function UserInfo(username, fname, lname, email, birthday, town, photo, role) {
+            // Public properties, assigned to the instance ('this')
+            this.username = username;
+            this.fname = fname;
+            this.lname = lname;
+            this.email = email;
+            this.birthday = birthday;
+            this.town = town;
+            this.photo = photo;
+            this.role = role;
         }
-      }
-      return null;
-    }
-  };
-});
+
+        /**
+         * Public method, assigned to prototype
+         */
+        UserInfo.getFirstName = function () {
+            return this.fname;
+        };
+        UserInfo.getLastName = function () {
+            return this.lname;
+        };
+        UserInfo.getUserName = function () {
+            return this.username;
+        };
+        UserInfo.getEmail = function () {
+            return this.email;
+        };
+        UserInfo.getBirthday = function () {
+            return this.birthday;
+        };
+        UserInfo.getTown = function () {
+            return this.town;
+        };
+        UserInfo.getRole = function () {
+            return this.role;
+        };
+        UserInfo.getPhoto = function () {
+            return this.photo;
+        };
+
+        return UserInfo;
+    })
+
+    .service("ChatService", function($q, $timeout) {
+
+        var service = {}, listener = $q.defer(), socket = {
+            client: null,
+            stomp: null
+        };
+
+        service.RECONNECT_TIMEOUT = 30000;
+        service.SOCKET_URL = "http://83.212.105.54:8080/chat";
+        service.CHAT_TOPIC = "/topic/chat";
+        service.CHAT_BROKER = "/app/chat";
+
+        service.receive = function() {
+            return listener.promise;
+        };
+
+        service.send = function(message, username, chatroom, latitude, longitude, ttl) {
+            socket.stomp.send(service.CHAT_BROKER, {}, JSON.stringify(
+                {
+                    'message': message,
+                    'username': username,
+                    'chatroom_name': chatroom,
+                    'lat': latitude,
+                    'lng': longitude,
+                    'ttl': ttl
+                }
+            ));
+        };
+
+        var reconnect = function() {
+            $timeout(function() {
+                initialize();
+            }, this.RECONNECT_TIMEOUT);
+        };
+
+        var getMessage = function(data) {
+            var message = JSON.parse(data), out = {};
+            out.message = message.message;
+            out.username = message.username;
+            out.time = new Date(message.date);
+            out.chatroom = message.chatroom;
+            out.response = message.response;
+
+            return out;
+        };
+
+        var startListener = function() {
+            socket.stomp.subscribe(service.CHAT_TOPIC, function(data) {
+                listener.notify(getMessage(data.body));
+            });
+        };
+
+        var initialize = function() {
+            socket.client = new SockJS(service.SOCKET_URL);
+            socket.stomp = Stomp.over(socket.client);
+            socket.stomp.connect({}, startListener);
+            socket.stomp.onclose = reconnect;
+        };
+
+        initialize();
+        return service;
+    });

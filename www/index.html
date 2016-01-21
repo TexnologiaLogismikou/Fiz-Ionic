@@ -6,34 +6,30 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 
     <!-- CSS Libraries -->
-    <link href="lib/ionic.min.css" rel="stylesheet">
+    <link href="lib/ionic/css/ionic.min.css" rel="stylesheet">
     <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
 
-    <!-- Javascript Libraries -->
-    <script src="lib/ionic.bundle.min.js"></script>
-    <script src="lib/auth0-lock.min.js"></script>
-    <script src="lib/auth0-angular.min.js"></script>
-    <script src="lib/angular-storage.min.js"></script>
-    <script src="lib/angular-jwt.min.js"></script>
+    <!-- Ionic Libraries -->
+    <script src="lib/ionic/js/ionic.bundle.min.js"></script>
+    <script src="lib/a0-angular-storage/dist/angular-storage.min.js"></script>
+    <script src="lib/angular-jwt/dist/angular-jwt.min.js"></script>
 
-    <!-- Latest major release -->
-    <script src="http://cdn.auth0.com/js/lock-7.min.js"></script>
+    <!-- Chat Libraries -->bower_components
+    <script src="lib/sockjs/sockjs.min.js" type="text/javascript"></script>
+    <script src="lib/stomp-websocket/lib/stomp.min.js" type="text/javascript"></script>
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/lodash/dist/lodash.min.js"></script>
 
-    <!-- Latest minor release -->
-    <script src="http://cdn.auth0.com/js/lock-7.x.min.js"></script>
-
-    <!-- Latest patch release (recommended for production) -->
-    <script src="http://cdn.auth0.com/js/lock-7.x.y.min.js"></script>
+    <!-- Geo location Library -->
+    <script src="lib/cordovaGeolocationModule.js"></script>
 
     <!-- Needed for Cordova/PhoneGap (will be a 404 during development) -->
     <script src="cordova.js"></script>
 
     <!-- My Javascript -->
-    <script src="js/auth0-variables.js"></script>
     <script src="js/app2.js"></script>
     <script src="js/controllers.js"></script>
     <script src="js/services.js"></script>
-
 </head>
 <body ng-app="starter">
 

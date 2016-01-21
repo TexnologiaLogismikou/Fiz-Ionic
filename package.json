@@ -14,7 +14,8 @@
     "shelljs": "^0.5.3"
   },
   "cordovaPlugins": [
-    "cordova-plugin-inappbrowser"
+    "cordova-plugin-inappbrowser",
+    "cordova-plugin-geolocation"
   ],
   "cordovaPlatforms": [
     "android"

@@ -1,5 +1,13 @@
 <ion-view view-title="Login">
-  <ion-content>
-    <!-- Login is loadede by auth0-angular -->
+  <ion-content class="padding">
+    <div class="list list-inset">
+      <label class="item item-input">
+        <input type="text" placeholder="Username" ng-model="data.username">
+      </label>
+      <label class="item item-input">
+        <input type="password" placeholder="Password" ng-model="data.password">
+      </label>
+    </div>
+    <button class="button button-block button-calm" ng-click="login()">sign in</button>
   </ion-content>
 </ion-view>

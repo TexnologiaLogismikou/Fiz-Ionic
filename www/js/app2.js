@@ -5,12 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic',
-        'starter.controllers',
-        'starter.services',
-        'auth0',
-        'angular-storage',
-        'angular-jwt'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
     .run(function($ionicPlatform) {
         $ionicPlatform.ready(function() {
@@ -26,18 +21,19 @@ angular.module('starter', ['ionic',
         });
     })
 
-    .config(function($stateProvider, $urlRouterProvider, authProvider,
-                     jwtInterceptorProvider, $httpProvider) {
+    .config(function($stateProvider, $urlRouterProvider) {
 
-        // Ionic uses AngularUI Router which uses the concept of states
-        // Learn more here: https://github.com/angular-ui/ui-router
-        // Set up the various states which the app can be in.
-        // Each state's controller can be found in controllers.js
         $stateProvider
             .state('login', {
                 url: "/login",
                 templateUrl: "templates/login.html",
                 controller: 'LoginCtrl'
+            })
+
+            .state('location', {
+                url: "/location",
+                templateUrl: "templates/location.html",
+                controller: 'GeoCtrl'
             })
 
             // setup an abstract state for the tabs directive
@@ -62,21 +58,12 @@ angular.module('starter', ['ionic',
                 }
             })
 
-            .state('tab.chats', {
-                url: '/chats',
+            .state('tab.chat', {
+                url: '/chat',
                 views: {
-                    'tab-chats': {
-                        templateUrl: 'templates/tab-chats.html',
-                        controller: 'ChatsCtrl'
-                    }
-                }
-            })
-            .state('tab.chat-detail', {
-                url: '/chats/:chatId',
-                views: {
-                    'tab-chats': {
-                        templateUrl: 'templates/chat-detail.html',
-                        controller: 'ChatDetailCtrl'
+                    'tab-chat': {
+                        templateUrl: 'templates/tab-chat.html',
+                        controller: 'ChatCtrl'
                     }
                 }
             })
@@ -100,42 +87,8 @@ angular.module('starter', ['ionic',
                     }
                 }
             });
-        // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/tab/dash');
 
-        // Configure Auth0
-        authProvider.init({
-            domain: AUTH0_DOMAIN,
-            clientID: AUTH0_CLIENT_ID,
-            loginState: 'login'
-        });
-
-        jwtInterceptorProvider.tokenGetter = function(store, jwtHelper, auth) {
-            var idToken = store.get('token');
-            var refreshToken = store.get('refreshToken');
-            if (!idToken || !refreshToken) {
-                return null;
-            }
-            if (jwtHelper.isTokenExpired(idToken)) {
-                return auth.refreshIdToken(refreshToken).then(function(idToken) {
-                    store.set('token', idToken);
-                    return idToken;
-                });
-            } else {
-                return idToken;
-            }
-        };
-
-        //$httpProvider.interceptors.push('jwtInterceptor');
-
-    }).run(function($rootScope, auth, store) {
-    $rootScope.$on('$locationChangeStart', function() {
-        if (!auth.isAuthenticated) {
-            var token = store.get('token');
-            if (token) {
-                auth.authenticate(store.get('profile'), token);
-            }
-        }
+        $urlRouterProvider.otherwise('/location');
 
     });
-});
+
