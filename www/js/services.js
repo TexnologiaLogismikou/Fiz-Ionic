@@ -48,9 +48,9 @@ angular.module('starter.services', [])
         return UserInfo;
     })
 
-    .service("ChatService", function($q, $timeout) {
+    .service("ChatService", function ($q, $timeout) {
 
-        var service = {}, listener = $q.defer(), socket = {
+        var chatR = "", service = {}, listener = $q.defer(), socket = {
             client: null,
             stomp: null
         };
@@ -60,11 +60,12 @@ angular.module('starter.services', [])
         service.CHAT_TOPIC = "/topic/chat";
         service.CHAT_BROKER = "/app/chat";
 
-        service.receive = function() {
+        service.receive = function () {
             return listener.promise;
         };
 
-        service.send = function(message, username, chatroom, latitude, longitude, ttl) {
+        service.send = function (message, username, chatroom, latitude, longitude, ttl) {
+            chatR = chatroom;
             socket.stomp.send(service.CHAT_BROKER, {}, JSON.stringify(
                 {
                     'message': message,
@@ -77,33 +78,44 @@ angular.module('starter.services', [])
             ));
         };
 
-        var reconnect = function() {
-            $timeout(function() {
+        var reconnect = function () {
+            $timeout(function () {
                 initialize();
             }, this.RECONNECT_TIMEOUT);
         };
 
-        var getMessage = function(data) {
+        var getMessage = function (data) {
             var message = JSON.parse(data), out = {};
             out.message = message.message;
             out.username = message.username;
             out.time = new Date(message.date);
             out.chatroom = message.chatroom;
             out.response = message.response;
-
+            if (chatR == message.chatroom) {
+                out.self = true;
+                chatR = "";
+            }
             return out;
         };
 
-        var startListener = function() {
-            socket.stomp.subscribe(service.CHAT_TOPIC, function(data) {
+        var startListener = function () {
+            socket.stomp.subscribe(service.CHAT_TOPIC, function (data) {
+                alert("subscribe");
                 listener.notify(getMessage(data.body));
             });
         };
 
-        var initialize = function() {
+        var initialize = function () {
+            alert("init1");
             socket.client = new SockJS(service.SOCKET_URL);
             socket.stomp = Stomp.over(socket.client);
-            socket.stomp.connect({}, startListener);
+            socket.stomp.connect({}, function () {
+                alert("init2");
+                socket.stomp.subscribe(service.CHAT_TOPIC, function (data) {
+                    alert("subscribe");
+                    listener.notify(getMessage(data.body));
+                });
+            });
             socket.stomp.onclose = reconnect;
         };
 

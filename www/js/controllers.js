@@ -53,85 +53,114 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
         };
     })
 
-    .controller('DashCtrl', function ($scope) {
+    .controller('DashCtrl', function ($scope, $http) {
         $scope.message = "hello";
+
+        function getRooms() {
+            var request = $http({
+                method: "post",
+                url: "http://83.212.105.54:8080/chatroom/findAvailableChatrooms",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    lng: "22",
+                    lat: "40"
+                }
+            });
+
+            $scope.join = function() {
+                alert("yay");
+            };
+            request.success(function (data, res) {
+                    $scope.chatRooms = [];
+                alert(JSON.stringify(data));
+                    var chatRoom = {};
+                    if (data.size == 0){
+                        $scope.message = '<h5>There are no available rooms in your area!</h5>'
+                    }
+                    else {
+                        chatRoom.room = data.chatroom_1;
+                        $scope.chatRooms.put(chatRoom);
+
+                    }
+                }
+            );
+            request.error(function (data, res) {
+                    alert("f" + JSON.stringify(data));
+                }
+            );
+        }
+        getRooms();
     })
 
-    .controller("ChatCtrl", function($scope, $rootScope, $timeout) {
+    .controller("ChatCtrl", function($scope, $rootScope) {
 
         $scope.messages = [];
         $scope.message = {};
         $scope.max = 140;
 
-        var user = $rootScope.userinfo;
-        var longitude = $rootScope.position.coords.longitude;
-        var latitude = $rootScope.position.coords.latitude;
-        var chatroom = "first_testing_room";
-        var ttl = '10';
+        var stompClient = null;
 
-        var socket = {
-            client: null,
-            stomp: null
-        };
-
-        var RECONNECT_TIMEOUT = 30000;
-        var SOCKET_URL = "http://83.212.105.54:8080/chat";
-        var CHAT_TOPIC = "/topic/chat";
-        var CHAT_BROKER = "/app/chat";
-
-        $scope.send = function() {
-            var message = $scope.messages.value, username = 'milenaAz';
-
-            socket.stomp.send(CHAT_BROKER, {}, JSON.stringify(
-                {
-                    'message' : message,
-                    'username' : username,
-                    'chatroom_name' : chatroom,
-                    'lat' : '42',
-                    'lng' : '22',
-                    'ttl' : '20'
-                }
-            ));
-            $scope.message.value = "";
-        };
-
-        var reconnect = function() {
-            $timeout(function() {
-                initialize();
-            }, RECONNECT_TIMEOUT);
-        };
-
-
-        $scope.initialize = function() {
-            alert("init");
-            socket.client = new SockJS(SOCKET_URL);
-            socket.stomp = Stomp.over(socket.client);
-            socket.stomp.connect({}, function(){
-                socket.stomp.subscribe(CHAT_TOPIC, function(data) {
-                    var message = JSON.parse(data.body);
-                    alert(JSON.stringify(message));
-                    $scope.messages.push(message);
+        function connect() {
+            var socket = new SockJS('http://83.212.105.54:8080/chat');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/chat', function (chat) {
+                    showMessage(JSON.parse(chat.body).message, JSON.parse(chat.body).username, JSON.parse(chat.body).date, JSON.parse(chat.body).chatroom, JSON.parse(chat.body).response);
                 });
             });
-            socket.stomp.onclose = reconnect;
+        }
+
+        function disconnect() {
+            if (stompClient != null) {
+                stompClient.disconnect();
+            }
+            setConnected(false);
+            console.log("Disconnected");
+        }
+
+        function sendMessage() {
+            var user = $rootScope.userinfo;
+            var longitude = $rootScope.position.coords.longitude;
+            var latitude = $rootScope.position.coords.latitude;
+            var chatroom = 'first_testing_room';
+            var ttl = '10';
+
+            var message = $scope.message.value;
+            message = message.trim();
+            var lng = $rootScope.position.coords.longitude;
+            var a = String(lng);
+
+            if (/\S/.test(message)) {
+                stompClient.send("/app/chat", {}, JSON.stringify(
+                    {
+                        'message': message,
+                        'username': $rootScope.userinfo.username,
+                        'chatroom_name': 'first_testing_room',
+                        'lat': "40",
+                        'lng': a,
+                        'ttl': "10"
+                    }));
+            }
+            $scope.message.value = "";
+
+        }
+
+        function showMessage(message1, user1, date1, chatroom1, response1) {
+            var message = {};
+            message.message = message1;
+            message.username = user1;
+            $scope.messages.push(message);
+            $scope.$apply();
+        }
+
+        $scope.send = function() {
+            sendMessage()
         };
 
-
-
-
-        //
-        //$scope.addMessage = function() {
-        //    ChatService.send($scope.message.value, 'milenaAz', chatroom, '40', '22', ttl);
-        //    $scope.message.value = "";
-        //    var a = ChatService.receive();
-        //    alert(JSON.stringify(a));
-        //
-        //};
-
-        //ChatService.receive().then(null, null, function(message) {
-        //    alert(JSON.stringify(message));
-        //    $scope.messages.push(message);
-        //});
+        connect();
 
     })
 

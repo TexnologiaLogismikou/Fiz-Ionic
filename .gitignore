@@ -100,8 +100,8 @@ build/Release
 /test/tmp/
 
 # Bower
-bower_components
-lib
+/bower_components
+
 
 # Ionic Framework
 .tmp

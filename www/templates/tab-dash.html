@@ -1,6 +1,16 @@
 <ion-view view-title="Dashboard">
   <ion-content class="padding">
-    {{message}}
+    <div>{{message}}</div>
+    <div>
+      <div ng-bind-html="chatRooms"></div>
+      <div>
+        <ul>
+          <li ng-repeat="chatRoom in chatRooms" >
+            <span>{{chatRoom.room}}</span >
+          </li>
+        </ul>
+      </div>
+    </div>
   </ion-content>
 </ion-view>
 

@@ -1,23 +1,56 @@
 <ion-view view-title="Chat">
-    <ion-content has-bouncing="true" class="content">
-        <button ng-click="initialize()">init</button>
+    <ion-content>
+        <!--<div>-->
+            <!--<ul>-->
+                <!--<li ng-repeat="message in messages | orderBy:'time':true">-->
+                    <!--<span ng-style="font-weight:bold;">{{message.username}} : </span>{{message.message}}-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+        <!--<div class="list light-grey bottommsg">-->
+            <!--<div class="item item-input-inset light-grey">-->
+                <!--<label class="item-input-wrapper line-light-grey nopadtop">-->
+                    <!--<input class="line-light-grey" type="text" placeholder="Message"-->
+                           <!--ng-enter="sendDataToWS()" ng-model="message.value">-->
+                <!--</label>-->
+
+                <!--<div class="divsend">-->
+                    <!--<button class="button button-clear ion-android-send iconsend"-->
+                            <!--ng-click="sendDataToWS()"></button>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <!--<br/><br/><br/><br/><br/>-->
+        <!--<form ng-submit="addMessage()" name="messageForm">-->
+            <!--<input type="text" placeholder="Compose a new message..." ng-model="message.value" />-->
+            <!--<div >-->
+                <!--<span ng-bind="max - message.value.length" ng-class="{danger: message.value.length > max}">140</span>-->
+
+                <!--<button ng-disabled="message.value.length > max || message.value.length === 0">Send</button>-->
+            <!--</div>-->
+        <!--</form>-->
+        <!--<hr />-->
+        <!--<p ng-repeat="message in messages | orderBy:'time':true" class="message">-->
+            <!--<time>{{message.time | date:'HH:mm'}}</time>-->
+            <!--<span ng-class="{self: message.self}">{{message.message}}</span>-->
+        <!--</p>-->
+
         <div>
             <ul>
-                <li ng-repeat="message in messages | orderBy:'time':true">
-                    <span ng-style="font-weight:bold;">{{message.username}} : </span>{{message.message}}
+                <li ng-repeat="message in messages" >
+                    <span>{{message.username}} : </span >{{message.message}}
                 </li>
             </ul>
         </div>
+
         <div class="list light-grey bottommsg">
             <div class="item item-input-inset light-grey">
-                <label class="item-input-wrapper line-light-grey nopadtop">
-                    <input class="line-light-grey" type="text" placeholder="Message"
-                           ng-enter="send()" ng-model="message.value">
+                <label  class="item-input-wrapper line-light-grey nopadtop">
+                    <input class="line-light-grey" type="text"  placeholder="Message" ng-enter="send()" ng-model="message.value">
                 </label>
-
                 <div class="divsend">
-                    <button class="button button-clear ion-android-send iconsend"
-                            ng-click="send()"></button>
+                    <button class="button button-clear ion-android-send iconsend" ng-click="send()"></button>
                 </div>
             </div>
         </div>

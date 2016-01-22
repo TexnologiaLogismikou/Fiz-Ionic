@@ -22,6 +22,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     })
 
     .config(function($stateProvider, $urlRouterProvider) {
+        //$ionicConfigProvider.tabs.position("bottom");
+        //$ionicConfigProvider.tabs.style('standard');
+
+        //ngstompProvider
+        //    .url('http://83.212.105.54:8080/chat')
+        //    .class(SockJS);
 
         $stateProvider
             .state('login', {
