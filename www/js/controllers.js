@@ -2,7 +2,7 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
 
     .controller('GeoCtrl', function ($scope, $state, $rootScope, cordovaGeolocationService) {
 
-        $scope.getCurrentPosition = function () {
+        var getCurrentPosition = function () {
             cordovaGeolocationService.getCurrentPosition(successHandler, errorHandler);
         };
         var successHandler = function (position) {
@@ -14,6 +14,8 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
         var errorHandler = function (error) {
             alert("GPS is OFF or signal is too weak");
         };
+
+        getCurrentPosition();
     })
 
     .controller('LoginCtrl', function ($scope, $http, $state, UserInfo, $rootScope) {
@@ -26,8 +28,8 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
                     'Content-Type': 'application/json'
                 },
                 data: {
-                    username: "milenaAz",
-                    password: "milena"
+                    username: $scope.data.username,
+                    password: $scope.data.password
                 }
             });
             request.success(function (data, res) {
@@ -56,6 +58,30 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
     .controller('DashCtrl', function ($scope, $http) {
         $scope.message = "hello";
 
+        function joinRoom() {
+            var request = $http({
+                method: "post",
+                url: "http://83.212.105.54:8080/chatroom/findAvailableChatrooms",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    lng: "22",
+                    lat: "40"
+                }
+            });
+
+            request.success(function (data, res) {
+
+                }
+            );
+
+            request.error(function (data, res) {
+                    alert("Failed connecting to server!\n\n" + JSON.stringify(data));
+                }
+            );
+        }
+
         function getRooms() {
             var request = $http({
                 method: "post",
@@ -69,25 +95,56 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
                 }
             });
 
-            $scope.join = function() {
-                alert("yay");
-            };
             request.success(function (data, res) {
                     $scope.chatRooms = [];
-                alert(JSON.stringify(data));
+                    alert(JSON.stringify(data)); //TODO
                     var chatRoom = {};
+
                     if (data.size == 0){
-                        $scope.message = '<h5>There are no available rooms in your area!</h5>'
+                        chatRoom.room = 'There are no available rooms in your area!';
+                        $scope.chatRooms.put(chatroom);
                     }
                     else {
                         chatRoom.room = data.chatroom_1;
                         $scope.chatRooms.put(chatRoom);
 
+                        switch(data.size) {
+                            case 1:
+                                chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put(chatRoom);
+                                break;
+                            case 2:
+                                chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put(chatRoom);
+                                chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put(chatRoom);
+                                break;
+                            case 3:
+                                chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put(chatRoom);
+                                chatRoom.room = data.chatroom_2;
+                                $scope.chatRooms.put(chatRoom);
+                                chatRoom.room = data.chatroom_3;
+                                $scope.chatRooms.put(chatRoom);
+                                break;
+                            case 4:
+                                chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put(chatRoom);
+                                chatRoom.room = data.chatroom_2;
+                                $scope.chatRooms.put(chatRoom);
+                                chatRoom.room = data.chatroom_3;
+                                $scope.chatRooms.put(chatRoom);
+                                chatRoom.room = data.chatroom_4;
+                                $scope.chatRooms.put(chatRoom);
+                                break;
+                            default:
+                        }
+
                     }
                 }
             );
             request.error(function (data, res) {
-                    alert("f" + JSON.stringify(data));
+                    alert("Failed connecting to server!\n\n" + JSON.stringify(data));
                 }
             );
         }

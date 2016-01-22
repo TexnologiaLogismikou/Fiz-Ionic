@@ -9,7 +9,7 @@
     "stomp-websocket": ">= 2.3.4",
     "angular": ">= 1.0.8",
     "lodash": "2.4.1",
-    "ng-stomp": "~0.0.2",
+    "ng-stomp": "~0.0.2"
   },
   "devDependencies": {
     "ionic": "driftyco/ionic-bower#v1.1.1"
