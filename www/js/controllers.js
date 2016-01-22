@@ -55,32 +55,37 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
         };
     })
 
-    .controller('DashCtrl', function ($scope, $http) {
-        $scope.message = "hello";
+    .controller('DashCtrl', function ($scope, $http, $rootScope) {
+        $scope.message = "Welcome";
 
-        function joinRoom() {
+        $scope.joinRoom = function(room) {
+
             var request = $http({
                 method: "post",
-                url: "http://83.212.105.54:8080/chatroom/findAvailableChatrooms",
+                url: "http://83.212.105.54:8080/chatroom/connectChatroom",
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 data: {
-                    lng: "22",
-                    lat: "40"
+                    room_name: room,
+                    member_name: $rootScope.userinfo.username,
+                    password: "",
+                    mode: "add",
+                    lng: $rootScope.position.coords.longitude,
+                    lat: $rootScope.position.coords.latitude
                 }
             });
 
             request.success(function (data, res) {
-
+                    //redirect to chat
                 }
             );
 
             request.error(function (data, res) {
-                    alert("Failed connecting to server!\n\n" + JSON.stringify(data));
+                    alert("Failed connecting to room!\n\n" + JSON.stringify(data));
                 }
             );
-        }
+        };
 
         function getRooms() {
             var request = $http({
@@ -98,44 +103,44 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
             request.success(function (data, res) {
                     $scope.chatRooms = [];
                     alert(JSON.stringify(data)); //TODO
-                    var chatRoom = {};
+                    $scope.chatRoom = {};
 
                     if (data.size == 0){
-                        chatRoom.room = 'There are no available rooms in your area!';
-                        $scope.chatRooms.put(chatroom);
+                        $scope.chatRoom.room = 'There are no available rooms in your area!';
+                        $scope.chatRooms.put($scope.chatroom);
                     }
                     else {
-                        chatRoom.room = data.chatroom_1;
+                        $scope.chatRoom.room = data.chatroom_1;
                         $scope.chatRooms.put(chatRoom);
 
                         switch(data.size) {
                             case 1:
-                                chatRoom.room = data.chatroom_1;
-                                $scope.chatRooms.put(chatRoom);
+                                $scope.chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put($scope.chatRoom);
                                 break;
                             case 2:
-                                chatRoom.room = data.chatroom_1;
-                                $scope.chatRooms.put(chatRoom);
-                                chatRoom.room = data.chatroom_1;
-                                $scope.chatRooms.put(chatRoom);
+                                $scope.chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put($scope.chatRoom);
+                                $scope.chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put($scope.chatRoom);
                                 break;
                             case 3:
-                                chatRoom.room = data.chatroom_1;
-                                $scope.chatRooms.put(chatRoom);
-                                chatRoom.room = data.chatroom_2;
-                                $scope.chatRooms.put(chatRoom);
-                                chatRoom.room = data.chatroom_3;
-                                $scope.chatRooms.put(chatRoom);
+                                $scope.chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put($scope.chatRoom);
+                                $scope.chatRoom.room = data.chatroom_2;
+                                $scope.chatRooms.put($scope.chatRoom);
+                                $scope.chatRoom.room = data.chatroom_3;
+                                $scope.chatRooms.put($scope.chatRoom);
                                 break;
                             case 4:
-                                chatRoom.room = data.chatroom_1;
-                                $scope.chatRooms.put(chatRoom);
-                                chatRoom.room = data.chatroom_2;
-                                $scope.chatRooms.put(chatRoom);
-                                chatRoom.room = data.chatroom_3;
-                                $scope.chatRooms.put(chatRoom);
-                                chatRoom.room = data.chatroom_4;
-                                $scope.chatRooms.put(chatRoom);
+                                $scope.chatRoom.room = data.chatroom_1;
+                                $scope.chatRooms.put($scope.chatRoom);
+                                $scope.chatRoom.room = data.chatroom_2;
+                                $scope.chatRooms.put($scope.chatRoom);
+                                $scope.chatRoom.room = data.chatroom_3;
+                                $scope.chatRooms.put($scope.chatRoom);
+                                $scope.chatRoom.room = data.chatroom_4;
+                                $scope.chatRooms.put($scope.chatRoom);
                                 break;
                             default:
                         }
@@ -148,6 +153,7 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
                 }
             );
         }
+
         getRooms();
     })
 
@@ -206,6 +212,7 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
         }
 
         function showMessage(message1, user1, date1, chatroom1, response1) {
+            //if(chatroom1)
             var message = {};
             message.message = message1;
             message.username = user1;
@@ -222,20 +229,49 @@ angular.module('starter.controllers', ['cordovaGeolocationModule'])
     })
 
     .controller('TestCtrl', function ($scope) {
+        $scope.data = {};
+        $scope.create = function() {
 
-        // I hold the data-dump of the FORM scope from the server-side.
-        $scope.test = "test";
-        $scope.test1 = "test1";
+            var request = $http({
+                method: "post",
+                url: "http://83.212.105.54:8080/chatroom/newChatroom",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: {
+                    username: $rootScope.userinfo.username,
+                    room_name: $scope.data.roomName,
+                    room_privilege: "",
+                    access_method: "",
+                    room_max_range: $scope.data.range,
+                    password: "",
+                    hasPassword: false,
+                    mode: "add",
+                    room_lng: $rootScope.position.coords.longitude,
+                    room_lat: $rootScope.position.coords.latitude
+                }
+            });
+
+            request.success(function (data, res) {
+                    //redirect to chat
+                }
+            );
+
+            request.error(function (data, res) {
+                    alert("Failed creating room!\n\n" + JSON.stringify(data));
+                }
+            );
+        }
     })
 
-    .controller('AccountCtrl', function ($scope, $state, $location) {
+    .controller('AccountCtrl', function ($scope, $state, $rootScope) {
         //$scope.email = store.get('profile').email;
         //$scope.username = store.get('profile').nickname;
         //$scope.picture = store.get('profile').picture;
         //$scope.created_at = new Date(store.get('profile').created_at);
         //$scope.Token = store.get('token');
         //$scope.refreshToken = store.get('refreshToken');
-
+        $scope.userinfo = $rootScope.userinfo;
         $scope.logout = function () {
             //auth.signout();
             //store.remove('token');

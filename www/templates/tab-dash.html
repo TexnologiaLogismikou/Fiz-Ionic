@@ -6,7 +6,7 @@
       <div>
         <ul>
           <li ng-repeat="chatRoom in chatRooms" >
-            <span>{{chatRoom.room}}</span >
+            <span>{{chatRoom.room}}</span > <button ng-click="join({{chatRoom.room}})">join</button>
           </li>
         </ul>
       </div>
